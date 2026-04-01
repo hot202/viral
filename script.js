@@ -3,69 +3,72 @@ const adDirectLink = "https://www.profitablecpmratenetwork.com/s9nugy8x?key=dd2e
 const adKey = "749353bf74da5e0e833cb6d506b3b614";
 const videoGrid = document.getElementById('video-grid');
 
-// Specific video numbers for ads
+// যে যে ভিডিওর উপরে অ্যাড থাকবে
 const adPositions = [1, 5, 9, 15];
 
 for (let i = 1; i <= totalVideos; i++) {
     const card = document.createElement('div');
     card.className = 'video-card';
 
-    let content = "";
+    let contentHTML = "";
     
-    // Check if current video should have a banner on top
+    // ভিডিওর উপরে অ্যাড যোগ করার লজিক
     if (adPositions.includes(i)) {
-        content += `
+        contentHTML += `
             <div class="ad-slot-top">
-                <span class="ad-label">SPONSORED</span>
+                <span class="ad-label">SPONSORED AD</span>
                 <div id="ad_top_${i}"></div>
             </div>
         `;
     }
 
-    content += `
-        <h3>ভিডিও ক্লিপ #${i}</h3>
+    // ভিডিওর মূল অংশ
+    contentHTML += `
+        <h3>ভাইরাল ভিডিও #${i}</h3>
         <video id="video_${i}" controls preload="metadata">
             <source src="video_${i}.mp4" type="video/mp4">
+            আপনার ব্রাউজার ভিডিও সাপোর্ট করে না।
         </video>
     `;
 
-    card.innerHTML = content;
+    card.innerHTML = contentHTML;
     videoGrid.appendChild(card);
 
-    // Inject Script if it's an ad position
+    // অ্যাড স্ক্রিপ্ট রান করানো (যদি পজিশনে থাকে)
     if (adPositions.includes(i)) {
-        injectAd(`ad_top_${i}`);
+        injectAdsterraBanner(`ad_top_${i}`);
     }
 
-    // Direct Link on Video Play
+    // ভিডিও প্লে করলে Direct Link ওপেন হওয়া
     const videoElement = card.querySelector('video');
     videoElement.addEventListener('play', function() {
         window.open(adDirectLink, '_blank');
     });
 }
 
-// 20-ti video shesh howar por ekdom niche final banner ad
-const bottomAdContainer = document.createElement('div');
-bottomAdContainer.className = 'final-bottom-ad';
-bottomAdContainer.innerHTML = `
+// একদম শেষে (সব ভিডিওর নিচে) আর একটি অ্যাড যোগ করা
+const mainContainer = document.querySelector('.container');
+const bottomAdDiv = document.createElement('div');
+bottomAdDiv.className = 'final-bottom-ad';
+bottomAdDiv.innerHTML = `
     <span class="ad-label">SPONSORED CONTENT</span>
-    <div id="final_bottom_ad"></div>
+    <div id="final_bottom_ad_unit"></div>
 `;
-document.querySelector('.container').appendChild(bottomAdContainer);
-injectAd('final_bottom_ad');
+mainContainer.appendChild(bottomAdDiv);
+injectAdsterraBanner('final_bottom_ad_unit');
 
-// Function to inject Adsterra Script safely
-function injectAd(elementId) {
-    const container = document.getElementById(elementId);
-    if (!container) return;
+// অ্যাড ইনজেক্ট করার ফাংশন
+function injectAdsterraBanner(elementId) {
+    const adContainer = document.getElementById(elementId);
+    if (!adContainer) return;
 
     const conf = document.createElement('script');
     conf.type = 'text/javascript';
     conf.text = `atOptions = { 'key' : '${adKey}', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };`;
-    container.appendChild(conf);
+    adContainer.appendChild(conf);
 
     const invoke = document.createElement('script');
     invoke.type = 'text/javascript';
     invoke.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`;
-    container.appendChild(invoke);
+    adContainer.appendChild(invoke);
 }
