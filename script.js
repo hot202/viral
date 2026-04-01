@@ -7,32 +7,31 @@ for (let i = 1; i <= totalVideos; i++) {
     const card = document.createElement('div');
     card.className = 'video-card';
 
-    // ১ এবং ৩ নম্বর ভিডিওর জন্য আলাদা অ্যাড সেকশন ভেরিয়েবল
-    let adHTML = "";
+    // কার্ডের ভেতর ভিডিও এবং টাইটেল সেট করা
+    // এখানে কোনো ad-slot বা ad-container নেই ডিফল্টভাবে
+    let content = `
+        <h3>ভিডিও ক্লিপ #${i}</h3>
+        <video id="video_${i}" controls preload="metadata">
+            <source src="video_${i}.mp4" type="video/mp4">
+        </video>
+    `;
+
+    // শুধুমাত্র ১ এবং ৩ নম্বর লুপে অ্যাড এর HTML যোগ হবে
     if (i === 1 || i === 3) {
-        adHTML = `
-            <div class="ad-slot">
-                <span class="ad-label">SPONSORED AD</span>
+        content += `
+            <div class="ad-slot" id="slot_${i}" style="background: #000; padding: 15px 0; text-align: center; border-top: 1px solid #334155;">
+                <span style="font-size: 10px; color: #555; display: block; margin-bottom: 5px;">SPONSORED AD</span>
                 <div id="ad_space_${i}"></div>
             </div>
         `;
     }
 
-    // কার্ডের ভেতর ভিডিও সেট করা (বাকি ভিডিওগুলোর নিচে adHTML একদম খালি থাকবে)
-    card.innerHTML = `
-        <h3>ভিডিও ক্লিপ #${i}</h3>
-        <video id="video_${i}" controls preload="metadata">
-            <source src="video_${i}.mp4" type="video/mp4">
-        </video>
-        ${adHTML}
-    `;
-
+    card.innerHTML = content;
     videoGrid.appendChild(card);
 
-    // শুধুমাত্র ১ ও ৩ নম্বরে অ্যাড স্ক্রিপ্ট ইনজেক্ট করা
+    // ১ ও ৩ নম্বরে অ্যাড স্ক্রিপ্ট ইনজেক্ট করা
     if (i === 1 || i === 3) {
         const container = document.getElementById(`ad_space_${i}`);
-        
         const conf = document.createElement('script');
         conf.type = 'text/javascript';
         conf.text = `atOptions = { 'key' : '${adKey}', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };`;
@@ -44,7 +43,7 @@ for (let i = 1; i <= totalVideos; i++) {
         container.appendChild(invoke);
     }
 
-    // ভিডিও প্লে করলে Direct Link ওপেন হওয়ার লজিক
+    // ডাইরেক্ট লিঙ্ক লজিক
     const videoElement = card.querySelector('video');
     videoElement.addEventListener('play', function() {
         window.open(adDirectLink, '_blank');
