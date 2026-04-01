@@ -1,45 +1,49 @@
-// আপনার সেটিংস
-const totalVideos = 20; // আপনি চাইলে এখানে সংখ্যা বাড়াতে পারেন
-const adDirectLink = "https://www.profitablecpmratenetwork.com/s9nugy8x?key=dd2e5c4514d4de7e660ab41c92673096"; 
-const videoContainer = document.getElementById('video-container');
+const totalVideos = 20; // আপনি চাইলে বাড়াতে পারেন
+const adDirectLink = "https://www.profitablecpmratenetwork.com/s9nugy8x?key=dd2e5c4514d4de7e660ab41c92673096";
 
-// ভিডিও এবং অ্যাড জেনারেট করার লুপ
+// আপনার Adsterra Banner Key এখানে বসান (Dashboard থেকে পাবেন)
+const adsterraBannerKey = "YOUR_BANNER_KEY_HERE"; 
+
+const videoGrid = document.getElementById('video-grid');
+
 for (let i = 1; i <= totalVideos; i++) {
     const card = document.createElement('div');
     card.className = 'video-card';
 
-    // কার্ডের ভেতর ভিডিও এবং ব্যানারের HTML তৈরি
+    // ভিডিও কার্ডের ইন্টারফেস
     card.innerHTML = `
-        <h3>বিশেষ ভিডিও - ${i}</h3>
-        <video id="video_${i}" controls preload="metadata">
+        <h3>ভিডিও ক্লিপ #${i}</h3>
+        <video id="video_${i}" controls preload="metadata" poster="thumbnail.jpg">
             <source src="video_${i}.mp4" type="video/mp4">
-            আপনার ব্রাউজার সাপোর্ট করে না।
         </video>
-        <div class="ad-slot">
-            <div class="ad-placeholder" onclick="openAd()">
-                <p>বিজ্ঞাপন দেখুন</p>
-                <small>প্রিমিয়াম কন্টেন্ট আনলক করতে এখানে ক্লিক করুন</small>
+        <div class="ad-container">
+            <span class="ad-label">Sponsored Ad</span>
+            <div id="ad_slot_${i}">
+                <p style="font-size:12px; color:#444;">ব্যানার লোড হচ্ছে...</p>
             </div>
         </div>
     `;
 
-    videoContainer.appendChild(card);
+    videoGrid.appendChild(card);
 
-    // ভিডিও এলিমেন্টটি সিলেক্ট করা
     const videoElement = card.querySelector('video');
 
-    // ভিডিওতে প্রথমবার ক্লিক বা প্লে করলে অ্যাড ওপেন হবে
-    let adOpenedForThisVideo = false;
-
+    // লজিক ১: ভিডিও প্লে করলেই আপনার Direct Link ওপেন হবে
     videoElement.addEventListener('play', function() {
-        if (!adOpenedForThisVideo) {
-            window.open(adDirectLink, '_blank');
-            adOpenedForThisVideo = true; // একবার প্লে করলে যেন বারবার পপ-আপ না হয়
+        window.open(adDirectLink, '_blank');
+    });
+
+    // লজিক ২: ভিডিও ফুল স্ক্রিন করার অপশন (ডিফল্ট থাকে, জাস্ট নিশ্চিত করা)
+    videoElement.addEventListener('dblclick', function() {
+        if (videoElement.requestFullscreen) {
+            videoElement.requestFullscreen();
         }
     });
 }
 
-// ব্যানার বা টেক্সটে ক্লিক করলে অ্যাড ওপেন করার ফাংশন
-function openAd() {
-    window.open(adDirectLink, '_blank');
-}
+/** * Adsterra Banner Integration Note:
+ * Adsterra-এর ব্যানার স্ক্রিপ্ট সাধারণত ডকুমেন্ট লোড হওয়ার পর 
+ * নির্দিষ্ট ডিভে ইনজেক্ট করতে হয়। 
+ * নিচের কোডটি আপনার ব্যানারের জন্য কাজ করবে:
+ */
+// (ব্যানার স্ক্রিপ্টটি প্রতিটি ভিডিওর নিচে কাজ করানোর জন্য আপনার Adsterra কোডটি এখানে পেস্ট করতে পারেন)
