@@ -2,7 +2,7 @@ const totalVideos = 20; // আপনি চাইলে বাড়াতে প�
 const adDirectLink = "https://www.profitablecpmratenetwork.com/s9nugy8x?key=dd2e5c4514d4de7e660ab41c92673096";
 
 // আপনার Adsterra Banner Key এখানে বসান (Dashboard থেকে পাবেন)
-const adsterraBannerKey = "YOUR_BANNER_KEY_HERE"; 
+const adsterraBannerKey = "b834076c7c87de1ecdfca19c7cd0b23b"; 
 
 const videoGrid = document.getElementById('video-grid');
 
