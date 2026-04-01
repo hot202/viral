@@ -65,3 +65,26 @@ video {
     background: #000;
     cursor: pointer;
 }
+
+/* ১ নম্বর ভিডিওর উপরের অ্যাড স্লট */
+.top-ad-slot {
+    background: #000;
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: 2px solid #334155;
+    min-height: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-card {
+    background: #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+}
