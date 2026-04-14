@@ -3,42 +3,33 @@ const adDirectLink = "https://www.profitablecpmratenetwork.com/s9nugy8x?key=dd2e
 const adKey = "749353bf74da5e0e833cb6d506b3b614";
 const videoGrid = document.getElementById('video-grid');
 
-// অ্যাড পজিশন
 const adPositions = [1, 5, 9, 15];
 
-// ভিডিও অনুযায়ী থাম্বনেইল এবং ভিডিও সোর্স সেট করার জন্য অবজেক্ট
-// এখানে আপনি আপনার ভিডিও এবং ইমেজের নাম পরিবর্তন করে নিতে পারবেন
+// থাম্বনেইল ডাটাবেজ (এখানে আপনার থাম্বনেইল ইমেজের নাম দিন)
 const videoData = {
     1: { src: "video_1.mp4", thumb: "thumb_1.jpg" },
     2: { src: "video_2.mp4", thumb: "thumb_2.jpg" },
-    // এভাবে ২০টি পর্যন্ত আলাদা থাম্বনেইল সেট করতে পারবেন
+    // বাকিগুলো ডিফল্টভাবে thumb_i.jpg হিসেবে লোড হবে
 };
 
 for (let i = 1; i <= totalVideos; i++) {
     const card = document.createElement('div');
     card.className = 'video-card';
 
-    // ডিফল্ট ডাটা যদি videoData তে না থাকে
     const vSrc = videoData[i] ? videoData[i].src : `video_${i}.mp4`;
     const vThumb = videoData[i] ? videoData[i].thumb : `thumb_${i}.jpg`;
 
-    let contentHTML = "";
-    
-    if (adPositions.includes(i)) {
-        contentHTML += `
-            <div class="ad-slot-top">
-                <span class="ad-label">SPONSORED AD</span>
-                <div id="ad_top_${i}"></div>
-            </div>
-        `;
-    }
-
-    contentHTML += `
+    let contentHTML = `
         <h3>ভাইরাল ভিডিও #${i}</h3>
-        <div class="video-wrapper" style="position:relative;">
+        <div class="video-container" style="position:relative; overflow:hidden;">
+            <div id="timer_overlay_${i}" class="timer-overlay" style="display:none;">
+                <div class="timer-box">
+                    <p>ভিডিও শুরু হচ্ছে...</p>
+                    <span id="count_${i}">5</span>s
+                </div>
+            </div>
             <video id="video_${i}" controls preload="metadata" poster="${vThumb}">
                 <source src="${vSrc}" type="video/mp4">
-                আপনার ব্রাউজার ভিডিও সাপোর্ট করে না।
             </video>
         </div>
     `;
@@ -46,41 +37,31 @@ for (let i = 1; i <= totalVideos; i++) {
     card.innerHTML = contentHTML;
     videoGrid.appendChild(card);
 
-    if (adPositions.includes(i)) {
-        injectAdsterraBanner(`ad_top_${i}`);
-    }
+    const videoElement = document.getElementById(`video_${i}`);
+    const overlay = document.getElementById(`timer_overlay_${i}`);
+    const countSpan = document.getElementById(`count_${i}`);
 
-    const videoElement = card.querySelector('video');
-    
-    // ভিডিও প্লে লজিক (৫ সেকেন্ড অ্যাড ট্রিক)
     videoElement.addEventListener('play', function(e) {
-        if (!this.dataset.playedOnce) {
-            this.pause(); // ভিডিও পজ করে অ্যাড ওপেন করা
-            window.open(adDirectLink, '_blank');
+        if (!this.dataset.played) {
+            this.pause(); 
+            this.dataset.played = "true";
             
-            // একটি ছোট নোটিশ বা ওভারলে দেখানো যেতে পারে
-            alert("অ্যাডটি ওপেন হয়েছে। ৫ সেকেন্ড পর ভিডিওটি অটোমেটিক শুরু হবে।");
+            // নতুন ট্যাবে অ্যাড ওপেন করা
+            window.open(adDirectLink, '_blank');
 
-            setTimeout(() => {
-                this.dataset.playedOnce = "true";
-                this.play(); // ৫ সেকেন্ড পর ভিডিও প্লে হবে
-            }, 5000);
+            // টাইমার দেখানো
+            overlay.style.display = "flex";
+            let timeLeft = 5;
+
+            let countdown = setInterval(() => {
+                timeLeft--;
+                countSpan.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    overlay.style.display = "none";
+                    videoElement.play(); // ৫ সেকেন্ড পর ভিডিও অটো-প্লে
+                }
+            }, 1000);
         }
     });
-}
-
-// অ্যাড ইনজেক্ট ফাংশন
-function injectAdsterraBanner(elementId) {
-    const adContainer = document.getElementById(elementId);
-    if (!adContainer) return;
-
-    const conf = document.createElement('script');
-    conf.type = 'text/javascript';
-    conf.text = `atOptions = { 'key' : '${adKey}', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };`;
-    adContainer.appendChild(conf);
-
-    const invoke = document.createElement('script');
-    invoke.type = 'text/javascript';
-    invoke.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`;
-    adContainer.appendChild(invoke);
 }
