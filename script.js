@@ -3,16 +3,27 @@ const adDirectLink = "https://www.profitablecpmratenetwork.com/s9nugy8x?key=dd2e
 const adKey = "749353bf74da5e0e833cb6d506b3b614";
 const videoGrid = document.getElementById('video-grid');
 
-// যে যে ভিডিওর উপরে অ্যাড থাকবে
+// অ্যাড পজিশন
 const adPositions = [1, 5, 9, 15];
+
+// ভিডিও অনুযায়ী থাম্বনেইল এবং ভিডিও সোর্স সেট করার জন্য অবজেক্ট
+// এখানে আপনি আপনার ভিডিও এবং ইমেজের নাম পরিবর্তন করে নিতে পারবেন
+const videoData = {
+    1: { src: "video_1.mp4", thumb: "thumb_1.jpg" },
+    2: { src: "video_2.mp4", thumb: "thumb_2.jpg" },
+    // এভাবে ২০টি পর্যন্ত আলাদা থাম্বনেইল সেট করতে পারবেন
+};
 
 for (let i = 1; i <= totalVideos; i++) {
     const card = document.createElement('div');
     card.className = 'video-card';
 
+    // ডিফল্ট ডাটা যদি videoData তে না থাকে
+    const vSrc = videoData[i] ? videoData[i].src : `video_${i}.mp4`;
+    const vThumb = videoData[i] ? videoData[i].thumb : `thumb_${i}.jpg`;
+
     let contentHTML = "";
     
-    // ভিডিওর উপরে অ্যাড যোগ করার লজিক
     if (adPositions.includes(i)) {
         contentHTML += `
             <div class="ad-slot-top">
@@ -22,42 +33,43 @@ for (let i = 1; i <= totalVideos; i++) {
         `;
     }
 
-    // ভিডিওর মূল অংশ
     contentHTML += `
         <h3>ভাইরাল ভিডিও #${i}</h3>
-        <video id="video_${i}" controls preload="metadata">
-            <source src="video_${i}.mp4" type="video/mp4">
-            আপনার ব্রাউজার ভিডিও সাপোর্ট করে না।
-        </video>
+        <div class="video-wrapper" style="position:relative;">
+            <video id="video_${i}" controls preload="metadata" poster="${vThumb}">
+                <source src="${vSrc}" type="video/mp4">
+                আপনার ব্রাউজার ভিডিও সাপোর্ট করে না।
+            </video>
+        </div>
     `;
 
     card.innerHTML = contentHTML;
     videoGrid.appendChild(card);
 
-    // অ্যাড স্ক্রিপ্ট রান করানো (যদি পজিশনে থাকে)
     if (adPositions.includes(i)) {
         injectAdsterraBanner(`ad_top_${i}`);
     }
 
-    // ভিডিও প্লে করলে Direct Link ওপেন হওয়া
     const videoElement = card.querySelector('video');
-    videoElement.addEventListener('play', function() {
-        window.open(adDirectLink, '_blank');
+    
+    // ভিডিও প্লে লজিক (৫ সেকেন্ড অ্যাড ট্রিক)
+    videoElement.addEventListener('play', function(e) {
+        if (!this.dataset.playedOnce) {
+            this.pause(); // ভিডিও পজ করে অ্যাড ওপেন করা
+            window.open(adDirectLink, '_blank');
+            
+            // একটি ছোট নোটিশ বা ওভারলে দেখানো যেতে পারে
+            alert("অ্যাডটি ওপেন হয়েছে। ৫ সেকেন্ড পর ভিডিওটি অটোমেটিক শুরু হবে।");
+
+            setTimeout(() => {
+                this.dataset.playedOnce = "true";
+                this.play(); // ৫ সেকেন্ড পর ভিডিও প্লে হবে
+            }, 5000);
+        }
     });
 }
 
-// একদম শেষে (সব ভিডিওর নিচে) আর একটি অ্যাড যোগ করা
-const mainContainer = document.querySelector('.container');
-const bottomAdDiv = document.createElement('div');
-bottomAdDiv.className = 'final-bottom-ad';
-bottomAdDiv.innerHTML = `
-    <span class="ad-label">SPONSORED CONTENT</span>
-    <div id="final_bottom_ad_unit"></div>
-`;
-mainContainer.appendChild(bottomAdDiv);
-injectAdsterraBanner('final_bottom_ad_unit');
-
-// অ্যাড ইনজেক্ট করার ফাংশন
+// অ্যাড ইনজেক্ট ফাংশন
 function injectAdsterraBanner(elementId) {
     const adContainer = document.getElementById(elementId);
     if (!adContainer) return;
